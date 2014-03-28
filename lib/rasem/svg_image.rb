@@ -159,12 +159,56 @@ private
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="#{width}" height="#{height}" version="1.1"
-  xmlns="http://www.w3.org/2000/svg">
+  xmlns="http://www.w3.org/2000/svg" onload="init(evt)">
+<style>
+  .caption {
+    font-size: 14px;
+    font-family: Georgia, serif;
+  }
+  .tooltip {
+    font-size: 12px;
+  }
+  .tooltip_bg {
+    fill: white;
+    stroke: black;
+    stroke-width: 1;
+    opacity: 0.85;
+  }
+</style>
+<script type="text/ecmascript">
+  <![CDATA[
+    function init(evt) {
+      if ( window.svgDocument == null ) {
+        svgDocument = evt.target.ownerDocument;
+      }
+      tooltip = svgDocument.getElementById('tooltip');
+      tooltip_bg = svgDocument.getElementById('tooltip_bg');
+    }
+    function ShowTooltip(evt, mouseovertext) {
+      tooltip.setAttributeNS(null,"x",evt.clientX+11);
+      tooltip.setAttributeNS(null,"y",evt.clientY-3);
+      tooltip.firstChild.data = mouseovertext;
+      tooltip.setAttributeNS(null,"visibility","visible");
+      length = tooltip.getComputedTextLength();
+      tooltip_bg.setAttributeNS(null,"width",length+7);
+      tooltip_bg.setAttributeNS(null,"x",evt.clientX+8);
+      tooltip_bg.setAttributeNS(null,"y",evt.clientY-16);
+      tooltip_bg.setAttributeNS(null,"visibility","visibile");
+    }
+    function HideTooltip(evt) {
+      tooltip.setAttributeNS(null,"visibility","hidden");
+      tooltip_bg.setAttributeNS(null,"visibility","hidden");
+    }
+  ]]>
+</script>
     HEADER
   end
 
   # Write the closing tag of the file
   def write_close
+
+    @output << '<rect class="tooltip_bg" id="tooltip_bg" x="0" y="0" rx="4" ry="4" width="52" height="16" visibility="hidden"/>'
+    @output << '<text class="tooltip" id="tooltip" x="0" y="0" visibility="hidden">Tooltip</text>'
     @output << "</svg>"
   end
 
@@ -210,6 +254,8 @@ private
   # stroke-opacity: stroke opacity. ranges from 0 to 1
   # opacity: Opacity for the whole element
   def write_style(style)
+    tooltip = style[:tooltip]
+    style.delete(:tooltip)
     style_ = fix_style(default_style.merge(style))
     return if style_.empty?
     @output << ' style="'
@@ -217,6 +263,7 @@ private
       @output << "#{attribute}:#{value};"
     end
     @output << '"'
+    @output << " onmouseover=\"ShowTooltip(evt,#{tooltip})\" onmouseout=\"HideTooltip()\""
   end
 end
 
