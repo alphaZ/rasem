@@ -185,14 +185,14 @@ private
       tooltip_bg = svgDocument.getElementById('tooltip_bg');
     }
     function ShowTooltip(evt, mouseovertext) {
-      tooltip.setAttributeNS(null,"x",evt.clientX+11);
-      tooltip.setAttributeNS(null,"y",evt.clientY-3);
+      tooltip.setAttributeNS(null,"x",evt.layerX+11);
+      tooltip.setAttributeNS(null,"y",evt.layerY-3);
       tooltip.firstChild.data = mouseovertext;
       tooltip.setAttributeNS(null,"visibility","visible");
       length = tooltip.getComputedTextLength();
       tooltip_bg.setAttributeNS(null,"width",length+7);
-      tooltip_bg.setAttributeNS(null,"x",evt.clientX+8);
-      tooltip_bg.setAttributeNS(null,"y",evt.clientY-16);
+      tooltip_bg.setAttributeNS(null,"x",evt.layerX+8);
+      tooltip_bg.setAttributeNS(null,"y",evt.layerY-16);
       tooltip_bg.setAttributeNS(null,"visibility","visibile");
     }
     function HideTooltip(evt) {
